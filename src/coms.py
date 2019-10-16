@@ -7,6 +7,7 @@ import json
 import msgpack
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 
+
 class ComsMutex:
     '''maintains order between threads'''
     def __init__(self):
@@ -21,6 +22,7 @@ class ComsMutex:
 
         self.acknowledgement_mutex = Lock()
         self.acknowledgement_mutex = False
+
 
 def mac_xbee_port_name():
     '''Looks in /dev directory for connected XBee serial port name on a macOS.'''
@@ -91,7 +93,6 @@ class Coms():
                 print("Connect the XBee radio!")
                 time.sleep(5)
 
-
     def send_till_ack(self, address, msg, msg_id):
         '''Continuously sends message to given address until acknowledgement
         message is recieved with the corresponding ackid.'''
@@ -100,7 +101,6 @@ class Coms():
         while self.ack_id != msg_id:
             self.send(address, packed_data)
             time.sleep(1)
-
 
     def acknowledge(self, address, ack_id):
         '''Sends message received acknowledgement to GCS
@@ -115,12 +115,10 @@ class Coms():
         }
         self.send(address, ack)
 
-
     def new_msg_id(self):
         '''Increments msg_id and returns unique id for new message'''
         self.msg_id += 1
         return self.msg_id
-
 
     def recieve(self):
         '''Instantiate XBee device'''
@@ -136,7 +134,6 @@ class Coms():
             if self.xbee is not None and self.xbee.is_open():
                 self.xbee.close()
 
-
     def send(self, mac_address, data):
         '''sends data over xbee'''
         remote_device = RemoteXBeeDevice(self.xbee, XBee64BitAddress.from_hex_string(mac_address))
@@ -150,7 +147,6 @@ class Coms():
         self.xbee.send_data(remote_device, data)
         self.mutex.xbee_mutex.release()
         print("Success")
-
 
     def bad_msg(self, address, problem):
         '''Sends "bad message" to GCS if message received was poorly formatted/unreadable

@@ -9,6 +9,7 @@ import time
 import subprocess
 import cv2
 
+
 class Vision():
     ''' vision class for managing cv '''
     image_counter = 0
@@ -44,7 +45,6 @@ class Vision():
         from picamera import PiCamera #pylint: disable=import-error
         cam = PiCamera() #pylint: disable=import-error
         return cam
-
 
     @classmethod
     def take_picture(cls, camera, configs):

@@ -72,6 +72,7 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True):
 
     return n, e, -u
 
+
 def ecef2enu(x, y, z, lat0, lon0, h0, ell, deg):
     """
     input
@@ -143,6 +144,7 @@ def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
 
     return x, y, z
 
+
 def enu2uvw(east, north, up, lat0, lon0, deg=True):
     '''
     enu to uvw
@@ -158,6 +160,7 @@ def enu2uvw(east, north, up, lat0, lon0, deg=True):
     v = sin(lon0) * t + cos(lon0) * east
 
     return u, v, w
+
 
 def enu2ecef(e1, n1, u1, lat0, lon0, h0, deg, ell=None):
     """
@@ -175,6 +178,7 @@ def enu2ecef(e1, n1, u1, lat0, lon0, h0, deg, ell=None):
     dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
 
     return x0 + dx, y0 + dy, z0 + dz
+
 
 def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     """

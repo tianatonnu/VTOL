@@ -57,6 +57,7 @@ def main():
     # with profiler:
     # profiler.dump_stats("profiler_stats.txt")
 
+
 class GpsDeniedVtol(VTOL):
     '''encapsualtes variables and tools used for GPS denied navigation'''
 
@@ -95,7 +96,6 @@ class GpsDeniedVtol(VTOL):
     # how many pixels the drone can be off from the target before being in acceptance state
     EPSILON = 1000
 
-
     def get_image(self):
         '''gets image at vehicle's current lat lng position'''
         lat = self.location.global_relative_frame.lat
@@ -111,7 +111,6 @@ class GpsDeniedVtol(VTOL):
         decoded = cv2.imdecode(image, cv2.IMREAD_GRAYSCALE)
         cropped = decoded[:280, :]
         return cropped
-
 
     def set_position(self):
         '''Uses PID and position guesses to set the quad's position'''
@@ -149,11 +148,10 @@ class GpsDeniedVtol(VTOL):
                     x_control = self.total_tilt * remaining_x / remaining_dst_sq
                     y_control = self.total_tilt * remaining_y / remaining_dst_sq
 
-                self.set_attitude(roll_angle=x_control, \
-                            pitch_angle=y_control, \
-                            duration=.33, \
+                self.set_attitude(roll_angle=x_control,
+                            pitch_angle=y_control,
+                            duration=.33,
                             yaw_angle=0)
-
 
     def cv_stitch(self):
         '''Gathers and organizes feature points. Reports position guesses'''
@@ -183,7 +181,7 @@ class GpsDeniedVtol(VTOL):
         padding = .1
         low = padding
         high = 1 - low
-        image_bounds = [(dim[1] * low, dim[0] * low), (dim[1] * high, dim[0] * low), \
+        image_bounds = [(dim[1] * low, dim[0] * low), (dim[1] * high, dim[0] * low),
             (dim[1] * high, dim[0] * high), (dim[1] * low, dim[0] * high)]
         seen_poly = Polygon()
 
@@ -193,10 +191,10 @@ class GpsDeniedVtol(VTOL):
             cur_kp, cur_des = orb.detectAndCompute(img, None)
             # gathers map keys within frame size
             if self.misses < 3:
-                keys_within_region = [i for i, v in enumerate(map_kp) if \
-                    v.pt[0] >= self.position_guess[0] - self.frame_size[0] / 2 and \
-                    v.pt[0] <= self.position_guess[0] + self.frame_size[0] * 1.5 and \
-                    v.pt[1] >= self.position_guess[1] - self.frame_size[1] / 2 and \
+                keys_within_region = [i for i, v in enumerate(map_kp) if
+                    v.pt[0] >= self.position_guess[0] - self.frame_size[0] / 2 and
+                    v.pt[0] <= self.position_guess[0] + self.frame_size[0] * 1.5 and
+                    v.pt[1] >= self.position_guess[1] - self.frame_size[1] / 2 and
                     v.pt[1] <= self.position_guess[1] + self.frame_size[1] * 1.5]
                 #Use map des within the bounding box
                 relevant_map_des = np.array([map_des[i] for i in keys_within_region])
@@ -236,9 +234,9 @@ class GpsDeniedVtol(VTOL):
                 new_guess = np.matmul(m_matrix, [img.shape[1] / 2, img.shape[0] / 2, 1.0])[:2]
 
                 # find points outside of already scanned region and within bounds
-                bounds = Polygon(list(map(lambda bound: np.matmul(m_matrix, bound + \
+                bounds = Polygon(list(map(lambda bound: np.matmul(m_matrix, bound +
                     (1.0,))[:2], image_bounds)))
-                new_pts = [i for i, v in enumerate(cur_kp) if bounds.contains(Point(v.pt)) \
+                new_pts = [i for i, v in enumerate(cur_kp) if bounds.contains(Point(v.pt))
                     and not seen_poly.contains(Point(v.pt))]
 
                 print("Found ", len(new_pts), new_guess)
@@ -251,7 +249,7 @@ class GpsDeniedVtol(VTOL):
                     new_kp = [cur_kp[i] for i in new_pts]
 
                     for key in new_kp:
-                        cv2.circle(point_img, (int(key.pt[0]), int(key.pt[1])), \
+                        cv2.circle(point_img, (int(key.pt[0]), int(key.pt[1])),
                             10, 255, thickness=10)
 
                     cv2.imshow('points', cv2.resize(point_img, (500, 500)))
@@ -265,15 +263,13 @@ class GpsDeniedVtol(VTOL):
                 self.misses += 1
             cv2.waitKey(5)
 
-
-    def send_attitude_target(self, \
-        roll_angle=0.0, \
-        pitch_angle=0.0, \
-        yaw_angle=None, \
-        yaw_rate=0.0, \
-        use_yaw_rate=False, \
-        thrust=0.5 \
-    ):
+    def send_attitude_target(self,
+        roll_angle=0.0,
+        pitch_angle=0.0,
+        yaw_angle=None,
+        yaw_rate=0.0,
+        use_yaw_rate=False,
+        thrust=0.5):
         '''
         use_yaw_rate: the yaw can be controlled using yaw_angle OR yaw_rate.
                     When one is used, the other is ignored by Ardupilot.
@@ -300,15 +296,14 @@ class GpsDeniedVtol(VTOL):
         )
         self.send_mavlink(msg)
 
-    def set_attitude(self, \
-        roll_angle=0.0, \
-        pitch_angle=0.0, \
-        yaw_angle=None, \
-        yaw_rate=0.0, \
-        use_yaw_rate=False, \
-        thrust=0.5, \
-        duration=0 \
-    ):
+    def set_attitude(self,
+        roll_angle=0.0,
+        pitch_angle=0.0,
+        yaw_angle=None,
+        yaw_rate=0.0,
+        use_yaw_rate=False,
+        thrust=0.5,
+        duration=0):
         '''
         Note that from AC3.3 the message should be re-sent more often than every
         second, as an ATTITUDE_TARGET order has a timeout of 1s.

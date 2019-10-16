@@ -6,6 +6,7 @@ from pymavlink import mavutil
 import dronekit_sitl
 from coms import Coms
 
+
 class Tee():
     '''Writes to all file objects'''
     def __init__(self, *files):
@@ -20,6 +21,7 @@ class Tee():
         '''flushes files'''
         for file in self.files:
             file.flush()
+
 
 def setup_vehicle(configs):
     '''Sets up self as a vehicle'''
@@ -79,7 +81,6 @@ class VTOL(Vehicle):
         print('Initializing Coms')
         self.coms = Coms(self.configs, self.coms_callback)
 
-
     def start_auto_mission(self):
         '''Arms and starts an AUTO mission loaded onto the vehicle'''
         while not self.is_armable:
@@ -106,7 +107,6 @@ class VTOL(Vehicle):
             self.send_mavlink(msg)
 
         self.commands.next = 0
-
 
     def takeoff(self):
         '''Commands drone to take off by arming vehicle and flying to altitude'''
@@ -135,7 +135,6 @@ class VTOL(Vehicle):
 
         print("Reached target altitude")
 
-
     def land(self):
         '''Commands vehicle to land'''
         print("Returning to launch")
@@ -151,7 +150,6 @@ class VTOL(Vehicle):
         time.sleep(10)
         self.close()
 
-
     def change_status(self, new_status):
         ''':param new_status: new vehicle status to change to (refer to GCS formatting)'''
         if new_status not in ("ready", "running", "waiting", "paused", "error"):
@@ -161,7 +159,6 @@ class VTOL(Vehicle):
     def include_heading(self):
         '''Includes heading in messages'''
         self.heading = True
-
 
     def update_thread(self, address):
         ''':param vehicle: vehicle object that represents drone
